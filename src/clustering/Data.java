@@ -1,52 +1,76 @@
 package clustering;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.io.*;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.HeaderColumnNameTranslateMappingStrategy;
 
 public class Data {
-	ArrayList<Point> points = new ArrayList();
-	public Point maxXY = new Point();
-	public Point minXY = new Point();
+	ArrayList<Post> points = new ArrayList();
+	public Post maxXY = new Post();
+	public Post minXY = new Post();
 
-	public void getData(String pathname) throws IOException{
+	@SuppressWarnings("deprecation")
+	public void getData(String pathname) throws IOException {
 		String csvFile = "redditSubmissions_out.csv";
-		Point newpoint;
+		Post newpoint;
 		double xnew, ynew;
 		minXY.setMax();
 		maxXY.setMin();
-		// create CSVReader object
-		CSVReader reader = new CSVReader(new FileReader(csvFile), ',');
-		// read line by line
-		String[] record = null;
-		// skip header row
-		reader.readNext();
-		while ((record = reader.readNext()) != null) {
-			newpoint = new Point();
-			xnew = Integer.parseInt(record[0]);
-			ynew = Integer.parseInt(record[10]);
-			newpoint.x = xnew;
-			newpoint.y = ynew;
+		String previousId = "-1";
+		String currentId = "-1";
+		HeaderColumnNameTranslateMappingStrategy<Post> beanStrategy = new HeaderColumnNameTranslateMappingStrategy<Post>();
 
-			points.add(newpoint);
+		beanStrategy.setType(Post.class);
+		Map<String, String> columnMapping = new HashMap<String, String>();
+		columnMapping.put("#image_id", "imageId");
+		columnMapping.put("unixtime", "unixtime");
+		columnMapping.put("rawtime", "rawtime");
+		columnMapping.put("title", "title");
+		columnMapping.put("total_votes", "totalVotes");
+		columnMapping.put("reddit_id", "redditId");
+		columnMapping.put("number_of_upvotes", "numberOfUpvotes");
+		columnMapping.put("subreddit", "subreddit");
+		columnMapping.put("number_of_downvotes", "numberOfDownvotes");
+		columnMapping.put("localtime", "localTime");
+		columnMapping.put("score", "score");
+		columnMapping.put("number_of_comments", "numberOfComments");
+		columnMapping.put("username", "username");
 
+		beanStrategy.setColumnMapping(columnMapping);
+
+		CsvToBean<Post> csvToBean = new CsvToBean<Post>();
+		CSVReader reader = new CSVReader(new FileReader(csvFile));
+		points = (ArrayList<Post>) csvToBean.parse(beanStrategy, reader);
+		points.remove(0);
+		for (Post post : points) {
+			currentId = post.getImageId();
+			if (!currentId.equals(previousId)) {
+				post.setOriginal(true);
+			}
+			xnew = Integer.parseInt(post.getScore());
+			ynew = Integer.parseInt(post.getNumberOfComments());
+			post.x = xnew;
+			post.y = ynew;
 			maxXY.x = Math.max(maxXY.x, xnew);
 			maxXY.y = Math.max(maxXY.y, ynew);
 			minXY.x = Math.min(minXY.x, xnew);
 			minXY.y = Math.min(minXY.y, ynew);
+			previousId = currentId;
 		}
 	}
 
 	public void printData() {
 		if (points.size() > 0) {
-			/*
-			 * for (int i = 0; i < points.size(); i++) { points.get(i).print();
-			 * }
-			 */
-
 			System.out.println("Max point:");
 			maxXY.print();
 			System.out.println("Min point:");
