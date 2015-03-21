@@ -47,21 +47,27 @@ public class Post {
 	@Setter
 	private boolean original;
 
-	public double x;
-	public double y;
-
-	public void setMin() {
-		x = Double.MIN_VALUE;
-		y = Double.MIN_VALUE;
+	private double[] clusterPoints;
+	public Post(){
+		
+		
+	}
+	public void addClusterPoint(int[] clusterOn) {
+		clusterPoints = new double[clusterOn.length];
+		String[] attributes = { imageId, unixtime, rawtime, title, totalVotes,
+				redditId, numberOfUpvotes, subreddit, numberOfDownvotes,
+				localTime, score, numberOfComments, username };
+		for (int i = 0; i < clusterOn.length; i++) {
+			clusterPoints[i] = Double.parseDouble(attributes[clusterOn[i]]);
+		}
 	}
 
-	public void setMax() {
-		x = Double.MAX_VALUE;
-		y = Double.MAX_VALUE;
+	public double[] getClusterPoints() {
+		return clusterPoints;
 	}
 
-	public void print() {
-		System.out.println("(" + x + ", " + y + ")" + getImageId()
-				+ getUnixtime() + getTotalVotes());
+	public int getNumClusterOn() {
+		return clusterPoints.length;
 	}
+
 }

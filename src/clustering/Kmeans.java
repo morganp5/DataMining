@@ -10,35 +10,43 @@ import lombok.Synchronized;
 
 public class Kmeans {
 	ArrayList<Cluster> clusters = new ArrayList<Cluster>();
+	Cluster largestCluster = new Cluster();
 	double systemDistanceFromCentroids;
 	double prevTotalDistance;
 	double StopAt = 0.01;
 	int k;
-	int maxIterations = 5;
+	int maxIterations = 10;
 	Data values;
 	Random random = new Random();
+	Distance distanceAlgorithm;
 
-	public void init(Data data, int k, Distance distanceAlgorithm) {
-		Post newCentroid, newpoint;
+	public void init(Data data, int k) {
+		int numOfAttributes = data.getNumAttributes();
 		Cluster newCluster;
 		systemDistanceFromCentroids = Double.MAX_VALUE;
 		System.out.println(k + " clusters will be created.");
 		this.values = data;
 		for (int i = 0; i < k; i++) {
-			newCentroid = new Post();
-			newCentroid.x = random.nextDouble()
-					* (values.maxXY.x - values.minXY.x) + values.minXY.x;
-			newCentroid.y = random.nextDouble()
-					* (values.maxXY.y - values.minXY.y) + values.minXY.y;
 			newCluster = new Cluster(distanceAlgorithm);
-			newCluster.setCentroid(newCentroid);
+			System.out.println(numOfAttributes+ "NUM");
+			newCluster.init(numOfAttributes);
 			clusters.add(newCluster);
 		}
+		for (int x=0 ; x < data.posts.size(); x++) {
+			int random = (int) (Math.random() * (k - 1));
+			clusters.get(random).addPost(data.posts.get(x));
+		}
 		for (Cluster cluster : clusters) {
-			System.out.println("Random centroid: " + cluster.centroid.x + ","
-					+ cluster.centroid.y);
+			if(!cluster.isNull()){
+				cluster.calculateCentroid();
+			}
+			cluster.printCentroid();
 		}
 		System.out.println("System entropy: " + systemDistanceFromCentroids);
+	}
+
+	public void setDistanceAlgorithm(Distance distanceAlgorithm) {
+		this.distanceAlgorithm = distanceAlgorithm;
 	}
 
 	public void clearClusters() {
@@ -50,17 +58,17 @@ public class Kmeans {
 	public void assignPoints() {
 		double minDistance, newDistance;
 		ManhattanDistance measureStyle = new ManhattanDistance();
-		for (Post p : values.points) {
+		for (Post p : values.posts) {
 			minDistance = Double.MAX_VALUE;
 			Cluster closestCluster = null;
 			for (Cluster c : clusters) {
-				newDistance = measureStyle.getDistance(p, c.getCentroid());
+				newDistance = measureStyle.getDistance(p.getClusterPoints(), c.getCentroid());
 				if (newDistance < minDistance) {
 					minDistance = newDistance;
 					closestCluster = c;
 				}
 			}
-			closestCluster.addPoint(p);
+			closestCluster.addPost(p);
 		}
 	}
 
@@ -70,7 +78,6 @@ public class Kmeans {
 			c.printCluster();
 		}
 	}
-	Cluster largestCluster = new Cluster();
 
 	public void updateSystemDistance() {
 		double largestDistance = 0;
@@ -102,11 +109,13 @@ public class Kmeans {
 			// Check if any cluster is empty and splits the largest distance
 			// cluster in half
 			ListIterator<Cluster> it = clusters.listIterator();
-			while(it.hasNext()) {
-				Cluster c = it.next();	
+			while (it.hasNext()) {
+				Cluster c = it.next();
 				if (c.isNull()) {
 					System.out.println("Spliting empty cluster");
+					System.out.println("Size before"+largestCluster.getSize());
 					c = largestCluster.split();
+					System.out.println(c.getSize()+"  Size After"+largestCluster.getSize());
 					c.calculateCentroid();
 					it.set(c);
 				}
@@ -124,8 +133,7 @@ public class Kmeans {
 
 	public void summary() {
 		for (Cluster cluster : clusters) {
-			System.out.println("Final centroid: " + cluster.centroid.x + ","
-					+ cluster.centroid.y);
+			cluster.printCentroid();
 		}
 		System.out.println("System energy: " + systemDistanceFromCentroids / 2);
 	}
