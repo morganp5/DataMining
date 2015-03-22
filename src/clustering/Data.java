@@ -3,12 +3,16 @@ package clustering;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.*;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.HeaderColumnNameTranslateMappingStrategy;
 
@@ -55,6 +59,49 @@ public class Data {
 			}
 			previousId = currentId;
 		}
+	}
+	
+	public void cleanTitleCSV() throws IOException{
+		 CSVReader reader = new CSVReader(new FileReader("redditSubmissions_out.csv"));
+		 String [] nextLine;
+		 CSVWriter writer = new CSVWriter(new FileWriter("redditSubmissions_out2.csv"), ',');
+	     // feed in your array (or convert your data to an array)
+		 String[] entries;
+		 ArrayList<String> stopWords = new ArrayList<String>();
+	     Scanner r = new Scanner(new File("stop_words.txt"));
+	     //String row = r.readLine();
+	     
+	     while(r.hasNext()){
+	    	 stopWords.add(r.next());
+	     }
+	     r.close();
+         Pattern pattern = Pattern.compile("[a-zA-Z']*");    
+	     try {
+			while ((nextLine = reader.readNext()) != null) {
+				 entries = nextLine;
+				 String[] words = nextLine[3].split(" ");
+				 entries[3] = "";
+				 int flag = 0;
+				 for(int j = 0;j<words.length;j++){
+					 Matcher matcher = pattern.matcher(words[j].toLowerCase());					 
+		             if(matcher.find() && !stopWords.contains(matcher.group())){
+		             	if(flag!=0){
+		             		entries[3] = entries[3].concat(" ");
+		             	}
+		             	flag++;
+		            	 entries[3] = entries[3].concat(words[j].toLowerCase());
+		             }
+		             //System.out.println(matcher.group());
+		         }
+				 //System.out.println(entries);
+				 writer.writeNext(entries,true);
+			 }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 writer.close();
+	     	
 	}
 	
 	public int getNumAttributes(){
