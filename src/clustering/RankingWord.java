@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
 /**
@@ -34,14 +35,25 @@ public class RankingWord {
 			
 		}
 		
-		
 	}
 	
+	public int rankingOfWord(String key){
+		int k = 0;
+		for (Entry<String, Pair> entry : m_map.entrySet())
+        {
+			k++;
+			if(entry.getKey() == key){
+				return k;
+			}
+        }
+		return -1;
+		
+	}
 	
 	public void rankingPrint(){
 		SortMapByValue sortedMap = new SortMapByValue();
 		Map<String, Pair> sortedMapAsc = sortedMap.sortByComparator(m_map, sortedMap.DESC);
-        SortMapByValue.printMap(sortedMapAsc);
-		
+        SortMapByValue.printMap(sortedMapAsc);	
 	}
+	 
 }
