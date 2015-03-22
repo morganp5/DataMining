@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 public class RankingWord {
 	private static final Map<String,Pair> m_map = new HashMap<String,Pair>();
 	
-	public void rankingAllWords(Data data,int[] atts) throws IOException{
+	public void rankingAllWords(Data data) throws IOException{
 		
 		for (int x=0 ; x < data.posts.size(); x++) {
 			Post post = data.posts.get(x);

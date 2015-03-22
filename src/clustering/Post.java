@@ -54,6 +54,7 @@ public class Post {
 	}
 	public void addClusterPoint(int[] clusterOn) {
 		clusterPoints = new double[clusterOn.length];
+		
 		String[] attributes = { imageId, unixtime, rawtime, title, totalVotes,
 				redditId, numberOfUpvotes, subreddit, numberOfDownvotes,
 				localTime, score, numberOfComments, username };
@@ -68,6 +69,10 @@ public class Post {
 
 	public int getNumClusterOn() {
 		return clusterPoints.length;
+	}
+	
+	public void setTitle(double v) {
+		clusterPoints[4]=v;
 	}
 
 }

@@ -65,8 +65,8 @@ public class Data {
 		 CSVReader reader = new CSVReader(new FileReader("redditSubmissions_out.csv"));
 		 String [] nextLine;
 		 CSVWriter writer = new CSVWriter(new FileWriter("redditSubmissions_out2.csv"), ',');
-	     // feed in your array (or convert your data to an array)
 		 String[] entries;
+		 
 		 ArrayList<String> stopWords = new ArrayList<String>();
 	     Scanner r = new Scanner(new File("stop_words.txt"));
 	     //String row = r.readLine();

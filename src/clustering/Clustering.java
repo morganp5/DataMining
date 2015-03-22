@@ -1,7 +1,6 @@
 package clustering;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -58,14 +57,18 @@ public class Clustering {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Data input = new Data();		
+		Data input = new Data();
 		int[] atts = selectAttributes();
-		input.getData("redditSubmissions_out.csv",atts);
+		input.cleanTitleCSV();
+		input.getData("redditSubmissions_out2.csv",atts);
+		RankingWord ranking = new RankingWord();
+		ranking.rankingAllWords(input);
+		
+		
 		Distance distanceAlgorithm = getDistanceAlgorithm();
 		Kmeans kmeans = new Kmeans();
-
 		kmeans.setDistanceAlgorithm(distanceAlgorithm);
-		kmeans.init(input, 4);
+		kmeans.init(input,ranking, 4);
 		kmeans.run();
 		kmeans.summary();
 	}

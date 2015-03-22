@@ -20,12 +20,25 @@ public class Kmeans {
 	Random random = new Random();
 	Distance distanceAlgorithm;
 
-	public void init(Data data, int k) {
+	public void init(Data data, RankingWord ranking, int k) {
 		int numOfAttributes = data.getNumAttributes();
 		Cluster newCluster;
 		systemDistanceFromCentroids = Double.MAX_VALUE;
 		System.out.println(k + " clusters will be created.");
 		this.values = data;
+		
+		for(Post post: data.posts){
+			int minimun = 88888888;
+			String[] words = post.getTitle().split(" ");
+			for(String word:words){
+				if(minimun>ranking.rankingOfWord(word))
+					minimun = ranking.rankingOfWord(word);
+			}
+			post.setTitle(minimun);
+			
+		}
+		
+		
 		for (int i = 0; i < k; i++) {
 			newCluster = new Cluster(distanceAlgorithm);
 			System.out.println(numOfAttributes+ "NUM");
