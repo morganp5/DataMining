@@ -57,12 +57,11 @@ public class Kmeans {
 
 	public void assignPoints() {
 		double minDistance, newDistance;
-		ManhattanDistance measureStyle = new ManhattanDistance();
 		for (Post p : values.posts) {
 			minDistance = Double.MAX_VALUE;
 			Cluster closestCluster = null;
 			for (Cluster c : clusters) {
-				newDistance = measureStyle.getDistance(p.getClusterPoints(), c.getCentroid());
+				newDistance = distanceAlgorithm.getDistance(p.getClusterPoints(), c.getCentroid());
 				if (newDistance < minDistance) {
 					minDistance = newDistance;
 					closestCluster = c;
@@ -113,9 +112,7 @@ public class Kmeans {
 				Cluster c = it.next();
 				if (c.isNull()) {
 					System.out.println("Spliting empty cluster");
-					System.out.println("Size before"+largestCluster.getSize());
 					c = largestCluster.split();
-					System.out.println(c.getSize()+"  Size After"+largestCluster.getSize());
 					c.calculateCentroid();
 					it.set(c);
 				}
@@ -136,5 +133,6 @@ public class Kmeans {
 			cluster.printCentroid();
 		}
 		System.out.println("System energy: " + systemDistanceFromCentroids / 2);
+		System.out.println("Distance Algoithm Used " + distanceAlgorithm.toString());
 	}
 }

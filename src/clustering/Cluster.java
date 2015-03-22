@@ -8,7 +8,6 @@ public class Cluster {
 	Distance distanceFormula;
 	int centroidSize;
 	String mostPopularSub = "";
-	double numOfPopular = 0;
 	double originalImageCount = 0;
 	double clusterDistanceFromCentroid = Double.MAX_VALUE;
 	/* centroid of the cluster */
@@ -88,6 +87,8 @@ public class Cluster {
 
 	public void getStats() {
 		HashMap<String, Integer> wordCounts = new HashMap<String, Integer>();
+		double numOfPopular = 0;
+
 		originalImageCount = 0;
 		for (Post p : Posts) {
 			String sub = p.getSubreddit();

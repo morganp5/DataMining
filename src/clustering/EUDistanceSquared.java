@@ -22,5 +22,10 @@ public class EUDistanceSquared implements Distance {
 
 	        return val;
 	    }
+	@Override
+	public String toString(){
+		return "Euclidean Distance Squared";
 	}
+}
+
 

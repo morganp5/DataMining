@@ -20,5 +20,10 @@ public class EUDistance implements Distance {
 
          return Math.sqrt(val);
      }
-
+	
+	
+	@Override
+	public String toString(){
+		return "Euclidean Distance";
+	}
 }

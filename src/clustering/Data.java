@@ -15,11 +15,12 @@ import com.opencsv.bean.HeaderColumnNameTranslateMappingStrategy;
 public class Data {
 	ArrayList<Post> posts = new ArrayList<Post>();
     /** index of Attributes to be used */
-    private int[] attributesUsed = {4, 10,11};
+    private int[] attributesUsed;
 
 	@SuppressWarnings("deprecation")
-	public void getData(String pathname) throws IOException {
-		String csvFile = "redditSubmissions_out.csv";
+	public void getData(String pathname,int[] attributes) throws IOException {
+		attributesUsed = attributes;
+		String csvFile = pathname;
 		String previousId = "-1";
 		String currentId = "-1";
 		HeaderColumnNameTranslateMappingStrategy<Post> beanStrategy = new HeaderColumnNameTranslateMappingStrategy<Post>();

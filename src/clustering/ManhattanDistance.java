@@ -17,4 +17,8 @@ public class ManhattanDistance implements Distance {
 		}
 		return distance;
 	}
+	
+	public String toString(){
+		return "Manhattan Distance";
+	}
 }
